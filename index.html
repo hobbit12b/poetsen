@@ -165,11 +165,6 @@
         background: linear-gradient(145deg, #75d9eb, #009bd3);
       }
 
-      .tool-button.music {
-        font-size: clamp(1.25rem, 2.4vw, 1.9rem);
-        background: linear-gradient(145deg, #b7eef8, #009bd3);
-      }
-
       .tool-button:focus-visible {
         outline: 4px solid rgba(0, 155, 211, .24);
         outline-offset: 3px;
@@ -210,12 +205,14 @@
       .task::before {
         content: "";
         position: absolute;
-        inset: -45% auto -45% -80%;
-        width: 42%;
-        background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.78) 46%, transparent 100%);
-        transform: skewX(-18deg);
+        top: -45%;
+        bottom: -45%;
+        left: -95%;
+        width: 58%;
+        background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.94) 44%, rgba(127,225,239,.75) 50%, rgba(255,255,255,.92) 56%, transparent 100%);
+        transform: skewX(-16deg);
         opacity: 0;
-        z-index: 2;
+        z-index: 4;
         pointer-events: none;
       }
 
@@ -231,7 +228,12 @@
       }
 
       .task.glimmer::before {
-        animation: glimmer 1.15s ease-out forwards;
+        animation: glimmer 1.55s ease-out forwards;
+      }
+
+      .task.glimmer {
+        box-shadow: 0 0 0 5px rgba(0, 155, 211, .16), 0 18px 34px rgba(0, 126, 180, .18);
+        border-color: rgba(0, 155, 211, .34);
       }
 
       .task:hover,
@@ -462,17 +464,19 @@
           inset 8px 10px 18px rgba(102, 199, 223, .18),
           0 8px 18px rgba(45, 56, 90, .08);
         pointer-events: none;
-        animation: rise var(--duration) cubic-bezier(.2, .72, .18, 1) forwards;
+        opacity: .82;
+        animation: rise var(--duration) linear forwards;
       }
 
       @keyframes glimmer {
         0% {
-          left: -78%;
+          left: -95%;
           opacity: 0;
         }
-        18% { opacity: .95; }
+        14% { opacity: 1; }
+        48% { opacity: .92; }
         100% {
-          left: 138%;
+          left: 145%;
           opacity: 0;
         }
       }
@@ -480,13 +484,13 @@
       @keyframes rise {
         0% {
           transform: translate3d(0, 0, 0) scale(.55);
-          opacity: 0;
+          opacity: .82;
         }
-        14% { opacity: .88; }
-        78% { opacity: .72; }
+        70% { opacity: .82; }
+        99% { opacity: .82; }
         to {
-          transform: translate3d(var(--drift), -132vh, 0) scale(1.08);
-          opacity: 0;
+          transform: translate3d(var(--drift), -150vh, 0) scale(1.08);
+          opacity: .82;
         }
       }
 
@@ -515,7 +519,6 @@
         </section>
         <div class="toolbar">
           <button class="tool-button edit" id="editTasks" type="button" aria-label="teksten aanpassen">✎</button>
-          <button class="tool-button music" id="musicButton" type="button" aria-label="liedjes kiezen">♫</button>
           <button class="tool-button" id="addTask" type="button" aria-label="item toevoegen">+</button>
         </div>
       </header>
@@ -535,8 +538,6 @@
         </div>
       </form>
     </div>
-
-    <input id="songFiles" type="file" accept="audio/*" multiple hidden>
 
     <div class="add-panel edit-panel" id="editPanel" aria-hidden="true">
       <form class="add-card edit-card" id="editForm">
@@ -574,6 +575,16 @@
         "ladekast links van aanrecht"
       ];
 
+      const builtInSongs = [
+        "bedanklied01.mp3",
+        "bedanklied02.mp3",
+        "bedanklied03.mp3",
+        "bedanklied04.mp3",
+        "bedanklied05.mp3",
+        "bedanklied06.mp3",
+        "bedanklied07.mp3"
+      ];
+
       const storageKey = "poetsfeest-digibord-v6";
       const tasksKey = "poetsfeest-digibord-tasks-v3";
       const board = document.querySelector("#board");
@@ -582,8 +593,6 @@
       const celebration = document.querySelector("#celebration");
       const addTaskButton = document.querySelector("#addTask");
       const editTasksButton = document.querySelector("#editTasks");
-      const musicButton = document.querySelector("#musicButton");
-      const songFiles = document.querySelector("#songFiles");
       const addPanel = document.querySelector("#addPanel");
       const addForm = document.querySelector("#addForm");
       const newTaskInput = document.querySelector("#newTask");
@@ -593,7 +602,6 @@
       const editList = document.querySelector("#editList");
       const cancelEditButton = document.querySelector("#cancelEdit");
       let audioContext;
-      let selectedSongs = [];
       let activeSong = null;
       let tasks = loadTasks();
       let done = loadState();
@@ -767,19 +775,15 @@
       }
 
       function playRandomSong() {
-        if (!selectedSongs.length) {
-          playOohSound();
-          return;
-        }
-
         if (activeSong) {
           activeSong.pause();
           activeSong.currentTime = 0;
         }
 
-        const song = selectedSongs[Math.floor(Math.random() * selectedSongs.length)];
-        activeSong = new Audio(song.url);
+        const songUrl = builtInSongs[Math.floor(Math.random() * builtInSongs.length)];
+        activeSong = new Audio(songUrl);
         activeSong.volume = 1;
+        activeSong.preload = "auto";
         activeSong.play().catch(() => {
           playOohSound();
         });
@@ -791,21 +795,21 @@
       }
 
       function blowSoapBubbles() {
-        const bubbleCount = 64;
+        const bubbleCount = 74;
         const lanes = Array.from({ length: bubbleCount }, (_, index) => index);
         lanes.sort(() => Math.random() - 0.5);
 
         for (let i = 0; i < bubbleCount; i += 1) {
           const bubble = document.createElement("span");
           const lane = lanes[i];
-          const size = Math.round(16 + Math.random() * 126);
+          const size = Math.round(12 + Math.random() * 156);
           const left = ((lane + 0.18 + Math.random() * 0.64) / bubbleCount) * 100;
           bubble.className = "soap-bubble";
           bubble.style.left = left + "vw";
           bubble.style.setProperty("--size", size + "px");
-          bubble.style.setProperty("--drift", Math.round(-170 + Math.random() * 340) + "px");
-          bubble.style.setProperty("--duration", Math.round(3200 + Math.random() * 2600) + "ms");
-          bubble.style.animationDelay = Math.round(Math.random() * 950) + "ms";
+          bubble.style.setProperty("--drift", Math.round(-230 + Math.random() * 460) + "px");
+          bubble.style.setProperty("--duration", Math.round(4700 + Math.random() * 3300) + "ms");
+          bubble.style.animationDelay = Math.round(Math.random() * 1350) + "ms";
           celebration.appendChild(bubble);
           bubble.addEventListener("animationend", () => bubble.remove());
         }
@@ -818,12 +822,12 @@
         card.classList.remove("glimmer");
         void card.offsetWidth;
         card.classList.add("glimmer");
-        window.setTimeout(() => card.classList.remove("glimmer"), 1250);
+        window.setTimeout(() => card.classList.remove("glimmer"), 1700);
       }
 
       function scheduleGlimmer() {
         window.clearTimeout(glimmerTimer);
-        const delay = 2600 + Math.random() * 3600;
+        const delay = 1500 + Math.random() * 2600;
         glimmerTimer = window.setTimeout(() => {
           glimmerRandomTask();
           scheduleGlimmer();
@@ -832,14 +836,6 @@
 
       addTaskButton.addEventListener("click", openAddPanel);
       editTasksButton.addEventListener("click", openEditPanel);
-      musicButton.addEventListener("click", () => songFiles.click());
-      songFiles.addEventListener("change", () => {
-        selectedSongs.forEach((song) => URL.revokeObjectURL(song.url));
-        selectedSongs = [...songFiles.files].map((file) => ({
-          name: file.name,
-          url: URL.createObjectURL(file)
-        }));
-      });
       cancelAddButton.addEventListener("click", closeAddPanel);
       cancelEditButton.addEventListener("click", closeEditPanel);
       addPanel.addEventListener("click", (event) => {
