@@ -284,6 +284,40 @@
         text-decoration: line-through;
         text-decoration-thickness: .12em;
         text-decoration-color: rgba(0, 155, 211, .46);
+        opacity: .42;
+      }
+
+      .heart-pop {
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        z-index: 5;
+        color: #ff5d78;
+        font-size: var(--size);
+        line-height: 1;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(.35) rotate(var(--turn));
+        opacity: 0;
+        filter: drop-shadow(0 4px 7px rgba(255, 93, 120, .18));
+        animation: heart-pop 1.45s ease-out forwards;
+      }
+
+      @keyframes heart-pop {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -10%) scale(.3) rotate(var(--turn));
+        }
+        18% {
+          opacity: .95;
+        }
+        58% {
+          opacity: .9;
+          transform: translate(calc(-50% + var(--drift)), -88%) scale(1) rotate(calc(var(--turn) + 10deg));
+        }
+        100% {
+          opacity: 0;
+          transform: translate(calc(-50% + var(--drift)), -155%) scale(.75) rotate(calc(var(--turn) + 20deg));
+        }
       }
 
       .add-panel {
@@ -666,10 +700,31 @@
 
       function toggleTask(index) {
         done[index] = !done[index];
+        const isNowDone = done[index];
         saveState();
         render();
-        if (done[index]) {
+        if (isNowDone) {
+          showHeartsOnTask(index);
           celebrate();
+        }
+      }
+
+      function showHeartsOnTask(index) {
+        const card = board.children[index];
+        if (!card) return;
+
+        for (let i = 0; i < 9; i += 1) {
+          const heart = document.createElement("span");
+          heart.className = "heart-pop";
+          heart.textContent = "♥";
+          heart.style.setProperty("--x", 24 + Math.random() * 58 + "%");
+          heart.style.setProperty("--y", 56 + Math.random() * 28 + "%");
+          heart.style.setProperty("--size", Math.round(14 + Math.random() * 20) + "px");
+          heart.style.setProperty("--drift", Math.round(-26 + Math.random() * 52) + "px");
+          heart.style.setProperty("--turn", Math.round(-18 + Math.random() * 36) + "deg");
+          heart.style.animationDelay = Math.round(i * 65 + Math.random() * 80) + "ms";
+          card.appendChild(heart);
+          heart.addEventListener("animationend", () => heart.remove());
         }
       }
 
