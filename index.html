@@ -27,7 +27,7 @@
         color: var(--ink);
         background:
           url("./background.png") center center / cover no-repeat,
-          linear-gradient(135deg, #f7fcff 0%, #eef8fd 55%, #f9fcff 100%);
+          linear-gradient(135deg, #f6fdff 0%, #eafaff 55%, #f9ffff 100%);
         overflow: hidden;
       }
 
@@ -196,13 +196,13 @@
         border: 2px solid rgba(0, 155, 211, .14);
         border-radius: 28px;
         background:
-          radial-gradient(circle at 91% 20%, rgba(0,155,211,.045) 0 12%, transparent 13%),
-          linear-gradient(145deg, rgba(255,255,255,.98), rgba(255,255,255,.96));
+          radial-gradient(circle at 91% 20%, rgba(0,155,211,.06) 0 12%, transparent 13%),
+          linear-gradient(145deg, rgba(255,255,255,.97), rgba(255,255,255,.94));
         box-shadow: 0 8px 18px rgba(0, 126, 180, .08);
         cursor: pointer;
         user-select: none;
         overflow: hidden;
-        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, opacity .18s ease;
       }
 
       .task::after {
@@ -272,8 +272,10 @@
       }
 
       .task.done {
-        filter: saturate(.95) brightness(1.01);
-        border-color: rgba(102, 198, 106, .38);
+        opacity: .48;
+        filter: saturate(.88) brightness(1.02);
+        border-color: rgba(102, 198, 106, .32);
+        box-shadow: 0 4px 10px rgba(0, 126, 180, .04);
       }
 
       .task.done .check {
