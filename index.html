@@ -26,16 +26,15 @@
         margin: 0;
         color: var(--ink);
         background:
-          radial-gradient(circle at 7% 12%, rgba(0, 155, 211, .12) 0 12%, transparent 12.5%),
-          radial-gradient(circle at 94% 14%, rgba(0, 155, 211, .10) 0 9%, transparent 9.5%),
-          radial-gradient(circle at 82% 93%, rgba(91, 218, 234, .16) 0 13%, transparent 13.5%),
-          radial-gradient(circle at 18% 88%, rgba(255, 255, 255, .88) 0 11%, transparent 11.5%),
+          linear-gradient(rgba(245, 251, 255, .72), rgba(245, 251, 255, .72)),
+          url("./background.png") center center / cover no-repeat,
           linear-gradient(135deg, #f6fdff 0%, #eafaff 55%, #f9ffff 100%);
         overflow: hidden;
       }
 
       body::before,
       body::after {
+        display: none;
         content: "";
         position: fixed;
         inset: auto;
@@ -51,6 +50,7 @@
       body::after { right: -5rem; bottom: 4rem; }
 
       .doodles {
+        display: none;
         position: fixed;
         inset: 0;
         pointer-events: none;
@@ -73,6 +73,7 @@
 
       .app {
         position: relative;
+        z-index: 1;
         width: min(1520px, calc(100vw - 18px));
         height: 100vh;
         margin: 0 auto;
@@ -196,8 +197,8 @@
         border: 2px solid rgba(0, 155, 211, .14);
         border-radius: 28px;
         background:
-          radial-gradient(circle at 91% 20%, rgba(0,155,211,.09) 0 12%, transparent 13%),
-          linear-gradient(145deg, rgba(255,255,255,.95), var(--card-tint));
+          radial-gradient(circle at 91% 20%, rgba(0,155,211,.06) 0 12%, transparent 13%),
+          linear-gradient(145deg, rgba(255,255,255,.97), rgba(255,255,255,.94));
         box-shadow: 0 8px 18px rgba(0, 126, 180, .08);
         cursor: pointer;
         user-select: none;
